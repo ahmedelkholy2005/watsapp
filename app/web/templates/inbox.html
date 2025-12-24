@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if err %}
+  <div class="alert">خطأ: {{ err }}</div>
+{% endif %}
+
+<div class="inbox">
+  <section class="col numbers">
+    <h3>الأرقام</h3>
+    <input class="search" placeholder="بحث..." oninput="filterList(this,'num-item')"/>
+    <div class="list">
+      {% for n in numbers %}
+        <a class="item num-item {% if n.id == selected_number_id %}active{% endif %}"
+           href="/inbox?number_id={{ n.id }}">
+          <div class="title">{{ n.display_name }}</div>
+          <div class="sub">ID: {{ n.phone_number_id }}</div>
+        </a>
+      {% endfor %}
+      {% if not numbers %}
+        <div class="muted">لا توجد أرقام مخصصة</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="col convs">
+    <h3>المحادثات</h3>
+    <input class="search" placeholder="بحث..." oninput="filterList(this,'conv-item')"/>
+    <div class="list" id="convList" data-room="number:{{ selected_number_id }}">
+      {% for c in conversations %}
+        <a class="item conv-item {% if c.id == selected_conversation_id %}active{% endif %}"
+           href="/inbox?number_id={{ selected_number_id }}&conversation_id={{ c.id }}">
+          <div class="title">{{ c.customer_wa_id }}</div>
+          <div class="sub">{{ c.status }} • {{ c.last_message_at or "" }}</div>
+        </a>
+      {% endfor %}
+      {% if not conversations %}
+        <div class="muted">لا توجد محادثات</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="col chat">
+    <div class="chat-head">
+      <h3>المحادثة</h3>
+      {% if selected_conversation_id %}
+        <form method="post" action="/inbox/lock">
+          <input type="hidden" name="conversation_id" value="{{ selected_conversation_id }}"/>
+          <button class="btn ghost" type="submit">استلام/قفل</button>
+        </form>
+      {% endif %}
+    </div>
+
+    <div class="chat-body" id="chatBody">
+      {% for m in messages %}
+        <div class="bubble {% if m.direction.value == 'out' %}out{% else %}in{% endif %}">
+          <div class="txt">{{ m.body }}</div>
+          <div class="meta">{{ m.sent_at }}</div>
+        </div>
+      {% endfor %}
+      {% if not messages %}
+        <div class="muted">اختر محادثة لعرض الرسائل</div>
+      {% endif %}
+    </div>
+
+    {% if selected_conversation_id %}
+    <form class="chat-send" method="post" action="/inbox/reply">
+      <input type="hidden" name="conversation_id" value="{{ selected_conversation_id }}"/>
+      <input name="text" placeholder="اكتب الرد..." autocomplete="off"/>
+      <button class="btn" type="submit">إرسال</button>
+    </form>
+    {% endif %}
+  </section>
+</div>
+
+<script>
+  window.__ROOM__ = "{{ 'number:' ~ selected_number_id if selected_number_id else '' }}";
+</script>
+
+{% endblock %}

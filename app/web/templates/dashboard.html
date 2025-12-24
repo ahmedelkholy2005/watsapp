@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="row">
+    <a class="card kpi" href="/inbox">
+      <div class="kpi-num">{{ stats.conversations }}</div>
+      <div class="kpi-label">كل المحادثات</div>
+    </a>
+    <div class="card kpi">
+      <div class="kpi-num">{{ stats.open }}</div>
+      <div class="kpi-label">مفتوحة</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-num">{{ stats.in_total }}</div>
+      <div class="kpi-label">الرسائل الواردة</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ملاحظات</h3>
+    <p class="muted">ابدأ بإضافة الأرقام من (Admin → الأرقام) ثم وزّعها على الموظفين من (Admin → التوزيع). بعد ضبط Webhook ستظهر الرسائل في Inbox.</p>
+  </div>
+{% endblock %}

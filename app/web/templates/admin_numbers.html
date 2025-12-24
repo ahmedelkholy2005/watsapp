@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card">
+  <h3>الأرقام (WhatsApp Numbers)</h3>
+  <form method="post" action="/admin/numbers" class="grid2">
+    <input name="display_name" placeholder="اسم العرض" required />
+    <input name="phone_number_id" placeholder="Meta phone_number_id" required />
+    <button class="btn" type="submit">إضافة</button>
+  </form>
+</div>
+
+<div class="card" style="margin-top:12px;">
+  <table class="tbl">
+    <thead><tr><th>ID</th><th>اسم</th><th>phone_number_id</th><th>حالة</th><th></th></tr></thead>
+    <tbody>
+    {% for n in numbers %}
+      <tr>
+        <td>{{ n.id }}</td>
+        <td>{{ n.display_name }}</td>
+        <td>{{ n.phone_number_id }}</td>
+        <td>{{ "مفعل" if n.is_active else "موقوف" }}</td>
+        <td>
+          <form method="post" action="/admin/numbers/{{ n.id }}/toggle">
+            <button class="btn ghost" type="submit">{{ "إيقاف" if n.is_active else "تفعيل" }}</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

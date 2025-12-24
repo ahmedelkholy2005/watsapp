@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card">
+  <h3>توزيع الأرقام على موظف</h3>
+  <form method="get" action="/admin/assignments" class="row1">
+    <label>اختر موظف:</label>
+    <select name="user_id" onchange="this.form.submit()">
+      {% for u in users %}
+        <option value="{{ u.id }}" {% if u.id == selected_user_id %}selected{% endif %}>{{ u.name }} ({{ u.username }})</option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+<div class="card" style="margin-top:12px;">
+  <form method="post" action="/admin/assignments" onsubmit="collectAssignments(event)">
+    <input type="hidden" name="user_id" value="{{ selected_user_id }}"/>
+    <input type="hidden" name="wa_number_ids" id="wa_number_ids" value=""/>
+    <div class="assign-grid">
+      {% for n in numbers %}
+        <label class="check">
+          <input type="checkbox" class="numchk" value="{{ n.id }}" {% if n.id in assigned %}checked{% endif %}/>
+          <span>{{ n.display_name }} ({{ n.id }})</span>
+        </label>
+      {% endfor %}
+      {% if not numbers %}
+        <div class="muted">لا توجد أرقام</div>
+      {% endif %}
+    </div>
+    <button class="btn" type="submit">حفظ التوزيع</button>
+  </form>
+</div>
+
+<script>
+function collectAssignments(e){
+  const ids = Array.from(document.querySelectorAll(".numchk:checked")).map(x => x.value);
+  document.getElementById("wa_number_ids").value = ids.join(",");
+}
+</script>
+{% endblock %}
